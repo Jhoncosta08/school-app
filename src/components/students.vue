@@ -20,6 +20,10 @@
               </ul>
             </v-list-item-subtitle>
           </v-list-item-content>
+          <v-list-item-action>
+            <v-btn color="blue" text @click="editStudent(student)">Edit</v-btn>
+            <v-btn color="red" text @click="deleteStudent(student.id)">Delete</v-btn>
+          </v-list-item-action>
         </v-list-item>
       </v-list-item-group>
       <v-list-item v-else>
@@ -44,9 +48,30 @@ export default {
         name: this.newStudentName,
         subjects: [],
       };
+      if (!this.newStudentName || this.newStudentName === "") {
+        return alert("Student name cannot be empty!");
+      }
       this.students.push(newStudent);
-      localStorage.setItem("students", JSON.stringify(this.students));
+      this.saveStudents();
       this.newStudentName = "";
+    },
+
+    editStudent(student) {
+      const updatedName = prompt("Edit student's name", student.name);
+      if (updatedName) {
+        student.name = updatedName;
+        this.saveStudents();
+      }
+    },
+    deleteStudent(studentId) {
+      const confirmed = confirm('Are you sure you want to delete this student?');
+      if (confirmed) {
+        this.students = this.students.filter(student => student.id !== studentId);
+        this.saveStudents();
+      }
+    },
+    saveStudents() {
+      localStorage.setItem('students', JSON.stringify(this.students));
     },
   },
 };

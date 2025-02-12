@@ -13,6 +13,10 @@
           <v-list-item-content>
             <v-list-item-title>{{ subject.name }}</v-list-item-title>
           </v-list-item-content>
+          <v-list-item-action>
+            <v-btn color="blue" text @click="editSubject(subject)">Edit</v-btn>
+            <v-btn color="red" text @click="deleteSubject(subject.id)">Delete</v-btn>
+          </v-list-item-action>
         </v-list-item>
       </v-list-item-group>
       <v-list-item v-else>
@@ -36,9 +40,37 @@ export default {
         id: Date.now(),
         name: this.newSubjectName,
       };
+      if (!this.newSubjectName || this.newSubjectName === "") {
+        return alert("Subject name cannot be empty!");
+      }
       this.subjects.push(newSubject);
-      localStorage.setItem("subjects", JSON.stringify(this.subjects));
+      this.saveSubjects();
       this.newSubjectName = "";
+    },
+    editSubject(subject) {
+      const updatedName = prompt("Edit subject name", subject.name);
+      if (updatedName) {
+        subject.name = updatedName;
+        this.saveSubjects();
+      }
+    },
+    deleteSubject(subjectId) {
+      const confirmed = confirm('Are you sure you want to delete this subject?');
+      if (confirmed) {
+        this.removeSubjectFromStudents(subjectId);
+        this.subjects = this.subjects.filter(subject => subject.id !== subjectId);
+        this.saveSubjects();
+      }
+    },
+    removeSubjectFromStudents(subjectId) {
+      const students = JSON.parse(localStorage.getItem('students')) || [];
+      students.forEach(student => {
+        student.subjects = student.subjects.filter(subject => subject.id !== subjectId);
+      });
+      localStorage.setItem('students', JSON.stringify(students));
+    },
+    saveSubjects() {
+      localStorage.setItem('subjects', JSON.stringify(this.subjects));
     },
   },
 };

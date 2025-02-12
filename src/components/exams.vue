@@ -47,18 +47,13 @@ export default {
         const student = this.students.find((s) => s.id === this.selectedStudent);
         const subject = this.subjects.find((s) => s.id === this.selectedSubject);
 
-        // Verifica se a matéria já existe para o aluno, caso contrário, adiciona
         const existingSubject = student.subjects.find((s) => s.id === subject.id);
         if (existingSubject) {
           existingSubject.score = this.score;
         } else {
           student.subjects.push({ ...subject, score: this.score });
         }
-
-        // Atualiza o localStorage
         localStorage.setItem("students", JSON.stringify(this.students));
-
-        // Limpa os campos
         this.selectedStudent = null;
         this.selectedSubject = null;
         this.score = null;
